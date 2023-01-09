@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ikaautoecole.spring.projet.payload.request.LoginRequest;
-import com.ikaautoecole.spring.projet.payload.response.MessageResponse;
+import com.ikaautoecole.spring.projet.DTO.request.LoginRequest;
+import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.security.jwt.JwtUtils;
-import com.ikaautoecole.spring.projet.security.services.UserDetailsImpl;
+import com.ikaautoecole.spring.projet.services.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

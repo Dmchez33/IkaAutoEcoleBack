@@ -1,9 +1,11 @@
 package com.ikaautoecole.spring.projet;
 
-import com.ikaautoecole.spring.projet.models.Collaborateur;
+import com.ikaautoecole.spring.projet.models.SuperAdmin;
+import com.ikaautoecole.spring.projet.models.Utilisateur;
 import com.ikaautoecole.spring.projet.models.ERole;
 import com.ikaautoecole.spring.projet.models.Role;
-import com.ikaautoecole.spring.projet.repository.CollaborateurRepository;
+import com.ikaautoecole.spring.projet.repository.SuperAdminRepository;
+import com.ikaautoecole.spring.projet.repository.UtilisateurRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ class SecuComApplication implements CommandLineRunner {
 
 	final private RoleRepository roleRepository;
 
-	final private CollaborateurRepository collaborateurRepository;
+	final private SuperAdminRepository collaborateurRepository;
 
 	//**************************** METHODE PRINCIPALE DE L'APPLICATION ***********
 	public static void main(String[] args) {
@@ -38,14 +40,15 @@ class SecuComApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		//VERIFICATION DE L'EXISTANCE DU ROLE ADMIN AVANT SA CREATION
 		if (roleRepository.findAll().size() == 0){
-			roleRepository.save(new Role(ERole.ROLE_ADMIN));
-			roleRepository.save(new Role(ERole.ROLE_USER));
+			roleRepository.save(new Role(ERole.ROLE_SUPER_ADMIN));
+			roleRepository.save(new Role(ERole.ROLE_ADMIN_AUTOECOLE));
+			roleRepository.save(new Role(ERole.ROLE_APPRENANT));
 		}
 		if (collaborateurRepository.findAll().size() == 0){
 			Set<Role> roles = new HashSet<>();
-			Role role = roleRepository.findByName(ERole.ROLE_ADMIN);
+			Role role = roleRepository.findByName(ERole.ROLE_SUPER_ADMIN);
 			roles.add(role);
-			Collaborateur collaborateur = new Collaborateur("admin","admin@gmail.com",encoder.encode( "12345678"));
+			SuperAdmin collaborateur = new SuperAdmin("admin","admin@gmail.com",encoder.encode( "12345678"));
 			collaborateur.setRoles(roles);
 			collaborateurRepository.save(collaborateur);
 

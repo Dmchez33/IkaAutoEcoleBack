@@ -5,13 +5,13 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ikaautoecole.spring.projet.models.Collaborateur;
+import com.ikaautoecole.spring.projet.models.Utilisateur;
 
 @Repository
-public interface CollaborateurRepository extends JpaRepository<Collaborateur, Long> {
-  Optional<Collaborateur> findByUsername(String username);
+public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
+  /*Optional<Utilisateur> findByUsername(String username);
 
   Boolean existsByUsername(String username);
 
-  Boolean existsByEmail(String email);
+  Boolean existsByEmail(String email);*/
 }

@@ -1,12 +1,15 @@
 package com.ikaautoecole.spring.projet.controllers;
 
-import com.ikaautoecole.spring.projet.models.Collaborateur;
+import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
+import com.ikaautoecole.spring.projet.DTO.request.SuperAdminRequest;
+import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
+import com.ikaautoecole.spring.projet.models.AdminAutoEcole;
 import com.ikaautoecole.spring.projet.models.ERole;
 import com.ikaautoecole.spring.projet.models.Role;
-import com.ikaautoecole.spring.projet.payload.request.SignupRequest;
-import com.ikaautoecole.spring.projet.payload.response.MessageResponse;
-import com.ikaautoecole.spring.projet.repository.CollaborateurRepository;
+import com.ikaautoecole.spring.projet.models.SuperAdmin;
+import com.ikaautoecole.spring.projet.repository.AdminautoecoleRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
+import com.ikaautoecole.spring.projet.repository.SuperAdminRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,48 +24,49 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/collaborateur")
-public class CollaborateurController {
+@RequestMapping("/api/adminAutoEcole")
+public class AdminAutoEcoleController {
 
-    private static final Logger Log = LoggerFactory.getLogger(CollaborateurController.class);
+    private static final Logger Log = LoggerFactory.getLogger(AdminAutoEcoleController.class);
     @Autowired
-    CollaborateurRepository collaborateurRepository;
+    AdminautoecoleRepository adminautoecoleRepository;
 
     @Autowired
     RoleRepository roleRepository;
+
     @Autowired
     PasswordEncoder encoder;
 
     //METHODE PERMETTANT DE RECUPERER TOUS LES UTILISATEURS
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Collaborateur> allUserAccess() {
+    public List<AdminAutoEcole> allUserAccess() {
         Log.info("RECUPERATION DE TOUT LES COLLABORATEUR");
-        return collaborateurRepository.findAll();
+        return adminautoecoleRepository.findAll();
     }
 
     //METHODE PERMETTANT L'AJOUT D'UN NOUVEAU COLLABORATEUR
-    @PostMapping("/createCollaborateur")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
+    @PostMapping("/createUtilisateur")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> registerUser(@RequestBody AdminAutoEcoleRequest signUpRequest) {
 
         //VERIFICATION DE L'EXISTANCE DU NOM D'UTILISATEUR
-        if (collaborateurRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (adminautoecoleRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Erreur: ce nom d'utilisateur existe deja!"));
         }
 
         //VERIFICATION DE L'EXISTANCE DE L'EMAIL
-        if (collaborateurRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Erreur: Ce email existe deja!"));
+        if (adminautoecoleRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Erreur: Cet email existe deja!"));
         }
 
 
-        Log.info("CREATION D'UN COLLABORATEUR");
+        Log.info("CREATION D'UN Utilisateur");
 
         // CREATION D'UNE INSTANCE DE COLLABORATEUR
-        Collaborateur user = new Collaborateur(signUpRequest.getUsername(),
+        AdminAutoEcole user = new AdminAutoEcole(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()), signUpRequest.getDatenaissance(), signUpRequest.getLieuxnaissance(), signUpRequest.getNomautoecole());
 
         //RECUPERATION DES ROLES DU COLLABORATEUR
         Set<String> strRoles = signUpRequest.getRole();
@@ -75,36 +79,32 @@ public class CollaborateurController {
         //SINON RECUPERE C'EST DIFFERENT ROLE ET ON VERIFIE SI CA EXISTE DANS LA BASE DE DONNEE
         // DANS LE CAS CONTRAIRE ON AFFECTE LE ROLE USER A CE COLLABORATEUR
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER);
+            Role userRole = roleRepository.findByName(ERole.ROLE_ADMIN_AUTOECOLE);
             roles.add(userRole);
         }  else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN);
-                        roles.add(adminRole);
-                        break;
                     default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER);
+                        Role userRole = roleRepository.findByName(ERole.ROLE_ADMIN_AUTOECOLE);
                         roles.add(userRole);
                 }
             });
         }
 
         user.setRoles(roles);
-        collaborateurRepository.save(user);
+        adminautoecoleRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("Collaborateur creer avec success!"));
+        return ResponseEntity.ok(new MessageResponse("AdminAutoEcole creer avec success!"));
     }
 
     //METHODE PERMETTANT DE METTRE A JOUR LES INFORMATION D'UN COLLABORATEUR
     @PutMapping("/updateCollaborateur/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Collaborateur updateCollaborateur(@Valid @RequestBody SignupRequest signUpRequest, @PathVariable("id") Long id){
+    public AdminAutoEcole updateCollaborateur(@Valid @RequestBody AdminAutoEcoleRequest signUpRequest, @PathVariable("id") Long id){
 
         Log.info("MODIFICATION D'UN COLLABORATEUR");
 
-        return  collaborateurRepository.findById(id).map(
+        return  adminautoecoleRepository.findById(id).map(
 
                 signUpRequest1 ->{
                     signUpRequest1.setUsername(signUpRequest.getUsername());
@@ -118,20 +118,20 @@ public class CollaborateurController {
 
                                 switch (role) {
                                     case "admin":
-                                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN);
+                                        Role adminRole = roleRepository.findByName(ERole.ROLE_SUPER_ADMIN);
                                         roles.add(adminRole);
                                         break;
                                     default:
-                                        Role userRole = roleRepository.findByName(ERole.ROLE_USER);
+                                        Role userRole = roleRepository.findByName(ERole.ROLE_APPRENANT);
                                         roles.add(userRole);
                                 }
                             }
                     );
                     signUpRequest1.setRoles(roles);
 
-                    return collaborateurRepository.save(signUpRequest1);
+                    return adminautoecoleRepository.save(signUpRequest1);
                 }
-        ).orElseThrow(() -> new RuntimeException("Collaborateur non trouvéé"));
+        ).orElseThrow(() -> new RuntimeException("Utilisateur non trouvéé"));
 
 
     }
@@ -139,17 +139,15 @@ public class CollaborateurController {
 
 
     //**************************************** METHODE PERMETTANT DE SUPPRIMER LE COLLABORATEUR
-    @DeleteMapping("/deleteCollaborateur/{id}")
+    @DeleteMapping("/deleteUtilisateur/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteCollaborateur(@PathVariable("id") Long id){
 
         Log.info("SUPPRESSION D'UN COLLABORATEUR");
 
-        collaborateurRepository.deleteById(id);
+        adminautoecoleRepository.deleteById(id);
 
         return "utilisateur supprimer";
 
     }
-
-
 }

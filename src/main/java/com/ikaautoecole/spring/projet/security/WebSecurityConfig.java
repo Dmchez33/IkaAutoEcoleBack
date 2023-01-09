@@ -1,6 +1,5 @@
 package com.ikaautoecole.spring.projet.security;
 
-import com.ikaautoecole.spring.projet.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +27,9 @@ import com.ikaautoecole.spring.projet.security.jwt.AuthTokenFilter;
     // jsr250Enabled = true,
     prePostEnabled = true)
 public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
-  @Autowired
-  UserDetailsServiceImpl userDetailsService;
+
+  //@Autowired
+  //private UserDetailsServiceImpl userDetailsService;
 
   @Autowired
   private AuthEntryPointJwt unauthorizedHandler;
@@ -40,7 +40,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
   }
 
 
-  @Bean
+  /*@Bean
   public DaoAuthenticationProvider authenticationProvider() {
       DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
        
@@ -48,7 +48,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
       authProvider.setPasswordEncoder(passwordEncoder());
    
       return authProvider;
-  }
+  }*/
   
 
   
@@ -77,7 +77,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 
     http.oauth2Login();
     
-    http.authenticationProvider(authenticationProvider());
+   // http.authenticationProvider(authenticationProvider());
 
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     

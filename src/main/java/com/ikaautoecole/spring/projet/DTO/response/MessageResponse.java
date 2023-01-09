@@ -1,4 +1,4 @@
-package com.ikaautoecole.spring.projet.payload.response;
+package com.ikaautoecole.spring.projet.DTO.response;
 
 public class MessageResponse {
 	private String message;
