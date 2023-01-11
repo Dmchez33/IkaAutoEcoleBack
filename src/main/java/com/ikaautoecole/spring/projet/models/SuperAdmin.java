@@ -27,7 +27,7 @@ import java.util.Set;
 public class SuperAdmin extends Utilisateur {
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "admin_roles",
+    @JoinTable(name = "roles",
             joinColumns = @JoinColumn(name = "admin_id"),
             inverseJoinColumns = @JoinColumn(name = "role1_id"))
     private Set<Role> roles = new HashSet<>();

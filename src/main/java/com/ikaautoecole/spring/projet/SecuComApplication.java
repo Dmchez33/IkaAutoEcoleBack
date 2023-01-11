@@ -27,7 +27,7 @@ class SecuComApplication implements CommandLineRunner {
 
 	final private RoleRepository roleRepository;
 
-	final private SuperAdminRepository collaborateurRepository;
+	final private SuperAdminRepository superAdminRepository;
 
 	//**************************** METHODE PRINCIPALE DE L'APPLICATION ***********
 	public static void main(String[] args) {
@@ -44,13 +44,13 @@ class SecuComApplication implements CommandLineRunner {
 			roleRepository.save(new Role(ERole.ROLE_ADMIN_AUTOECOLE));
 			roleRepository.save(new Role(ERole.ROLE_APPRENANT));
 		}
-		if (collaborateurRepository.findAll().size() == 0){
+		if (superAdminRepository.findAll().size() == 0){
 			Set<Role> roles = new HashSet<>();
 			Role role = roleRepository.findByName(ERole.ROLE_SUPER_ADMIN);
 			roles.add(role);
 			SuperAdmin collaborateur = new SuperAdmin("admin","admin@gmail.com",encoder.encode( "12345678"));
 			collaborateur.setRoles(roles);
-			collaborateurRepository.save(collaborateur);
+			superAdminRepository.save(collaborateur);
 
 		}
 	}

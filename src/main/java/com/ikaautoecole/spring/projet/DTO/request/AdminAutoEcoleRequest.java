@@ -31,4 +31,6 @@ public class AdminAutoEcoleRequest {
     private String image;
 
     private String nomautoecole;
+
+    private Boolean etat;
 }

@@ -1,5 +1,7 @@
 package com.ikaautoecole.spring.projet.controllers;
 
+import com.ikaautoecole.spring.projet.Configuration.SMSService;
+import com.ikaautoecole.spring.projet.Configuration.SendEmail;
 import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
 import com.ikaautoecole.spring.projet.DTO.request.SuperAdminRequest;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
@@ -10,18 +12,20 @@ import com.ikaautoecole.spring.projet.models.SuperAdmin;
 import com.ikaautoecole.spring.projet.repository.AdminautoecoleRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
 import com.ikaautoecole.spring.projet.repository.SuperAdminRepository;
+import com.ikaautoecole.spring.projet.services.AdminAutoEcoleDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/adminAutoEcole")
@@ -34,13 +38,23 @@ public class AdminAutoEcoleController {
     @Autowired
     RoleRepository roleRepository;
 
+
+    @Autowired
+    SendEmail sendEmail;
+
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    AdminAutoEcoleDetailsServiceImpl adminAutoEcoleDetailsService;
+
+    @Autowired
+    private SMSService smsService;
 
     //METHODE PERMETTANT DE RECUPERER TOUS LES UTILISATEURS
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<AdminAutoEcole> allUserAccess() {
+    public List<AdminAutoEcole> get() {
         Log.info("RECUPERATION DE TOUT LES COLLABORATEUR");
         return adminautoecoleRepository.findAll();
     }
@@ -48,7 +62,7 @@ public class AdminAutoEcoleController {
     //METHODE PERMETTANT L'AJOUT D'UN NOUVEAU COLLABORATEUR
     @PostMapping("/createUtilisateur")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> registerUser(@RequestBody AdminAutoEcoleRequest signUpRequest) {
+    public ResponseEntity<?> create(@RequestBody AdminAutoEcoleRequest signUpRequest) {
 
         //VERIFICATION DE L'EXISTANCE DU NOM D'UTILISATEUR
         if (adminautoecoleRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -92,15 +106,18 @@ public class AdminAutoEcoleController {
         }
 
         user.setRoles(roles);
+        user.setEtat(false);
+        sendEmail.sendWelcomeEmail(signUpRequest.getEmail(),signUpRequest.getUsername());
+        smsService.sendSMS("83252448", "Votre inscription a été effectué avec success");
         adminautoecoleRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("AdminAutoEcole creer avec success!"));
     }
 
     //METHODE PERMETTANT DE METTRE A JOUR LES INFORMATION D'UN COLLABORATEUR
-    @PutMapping("/updateCollaborateur/{id}")
+    @PutMapping("/updateAdminAutoEcole/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public AdminAutoEcole updateCollaborateur(@Valid @RequestBody AdminAutoEcoleRequest signUpRequest, @PathVariable("id") Long id){
+    public AdminAutoEcole update(@Valid @RequestBody AdminAutoEcoleRequest signUpRequest, @PathVariable("id") Long id){
 
         Log.info("MODIFICATION D'UN COLLABORATEUR");
 
@@ -129,6 +146,8 @@ public class AdminAutoEcoleController {
                     );
                     signUpRequest1.setRoles(roles);
 
+
+
                     return adminautoecoleRepository.save(signUpRequest1);
                 }
         ).orElseThrow(() -> new RuntimeException("Utilisateur non trouvéé"));
@@ -141,7 +160,7 @@ public class AdminAutoEcoleController {
     //**************************************** METHODE PERMETTANT DE SUPPRIMER LE COLLABORATEUR
     @DeleteMapping("/deleteUtilisateur/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String deleteCollaborateur(@PathVariable("id") Long id){
+    public String delete(@PathVariable("id") Long id){
 
         Log.info("SUPPRESSION D'UN COLLABORATEUR");
 
@@ -150,4 +169,11 @@ public class AdminAutoEcoleController {
         return "utilisateur supprimer";
 
     }
+
+    //+++++++++++++++++++++++++++++++++++++++METHODE PERMETTANT D'ACTIVER LE COMPTE D'UN UTILSATEUR +++++++++++++++++++++++++++++++++++++++++++++++++
+    @PatchMapping("/update/{id}")
+    public AdminAutoEcole updateEtat(@PathVariable("id") Long id, @RequestBody Map<String, Object> updates) {
+        return adminAutoEcoleDetailsService.updatePartial(id,updates);
+    }
+
 }
