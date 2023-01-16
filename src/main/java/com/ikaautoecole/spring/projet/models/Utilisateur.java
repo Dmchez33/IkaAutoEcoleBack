@@ -43,9 +43,6 @@ public abstract class Utilisateur {
           inverseJoinColumns = @JoinColumn(name = "role1_id"))
   private Set<Role> roles = new HashSet<>();
 
-  @ManyToOne
-  @JoinColumn(name = "idquiz")
-  private Quiz quiz;
 
   public Utilisateur(String username, String email, String password) {
     this.username = username;

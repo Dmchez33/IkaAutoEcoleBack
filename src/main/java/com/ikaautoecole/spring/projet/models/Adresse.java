@@ -1,19 +1,21 @@
 package com.ikaautoecole.spring.projet.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Cours {
+public class Adresse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    private String longitude;
+    private String latitude;
+    private String ville;
+    private String quartier;
+    private String telephone;
+
 
 }

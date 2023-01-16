@@ -72,12 +72,17 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.messagebird/messagebird-api -->
+<!--twilio dependance-->
 		<dependency>
-			<groupId>com.messagebird</groupId>
-			<artifactId>messagebird-api</artifactId>
-			<version>5.3.1</version>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>7.50.0</version>
+		</dependency>
+<!--Firebase messaging dependance -->
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>7.0.0</version>
 		</dependency>
 
 

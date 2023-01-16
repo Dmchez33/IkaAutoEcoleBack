@@ -1,28 +1,29 @@
 package com.ikaautoecole.spring.projet.Configuration;
-
-import com.messagebird.MessageBirdService;
-import com.messagebird.MessageBirdServiceImpl;
-import com.messagebird.objects.Message;
 import org.springframework.stereotype.Service;
-import com.messagebird.MessageBirdClient;
-import com.messagebird.exceptions.GeneralException;
-import com.messagebird.exceptions.NotFoundException;
-import com.messagebird.exceptions.UnauthorizedException;
-import com.messagebird.objects.MessageResponse;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 @Service
 public class SMSService {
-    private final MessageBirdClient messageBirdClient;
+    private final String ACCOUNT_SID;
+    private final String AUTH_TOKEN;
+    private final String FROM_NUMBER;
 
     public SMSService() {
-        MessageBirdService messageBirdService = new MessageBirdServiceImpl("yYkxXq1HjjPf3QYhsqRQvMxJn");
-        messageBirdClient = new MessageBirdClient(messageBirdService);
+        ACCOUNT_SID = "AC059e81ff4a26001119e3b19df555edea";
+        AUTH_TOKEN = "df49fe2cfb1cad831029f56b366daa39";
+        FROM_NUMBER = "+17756307308";
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
     }
 
     public void sendSMS(String phoneNumber, String messageContent) {
-        Message message = new Message("Idrissa DEMBELE", messageContent, String.valueOf(new String[] {phoneNumber}));
         try {
-            messageBirdClient.sendMessage(message);
+            Message message = Message
+                    .creator(new PhoneNumber(phoneNumber), // to
+                            new PhoneNumber(FROM_NUMBER), // from
+                            messageContent)
+                    .create();
             System.out.println("SMS sent successfully to " + phoneNumber);
         } catch (Exception e) {
             System.out.println("Error occurred while sending SMS: " + e.getMessage());

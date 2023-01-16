@@ -74,6 +74,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/test/**").permitAll()
             .antMatchers("/api/collaborateur/**").permitAll()
             .antMatchers("/api/adminAutoEcole/**").permitAll()
+            .antMatchers("/api/AutoEcole/**").permitAll()
             .anyRequest().authenticated();
     http.formLogin();
 

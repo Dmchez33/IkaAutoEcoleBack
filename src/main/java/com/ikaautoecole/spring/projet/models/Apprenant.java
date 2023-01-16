@@ -24,13 +24,14 @@ import java.util.Set;
 public class Apprenant extends Utilisateur {
         private String image;
         private String telephone;
+        private String status;
 
+        @ManyToOne
+        Autoecole autoecole;
 
-        @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(name = "roles",
-                joinColumns = @JoinColumn(name = "admin_id"),
-                inverseJoinColumns = @JoinColumn(name = "role1_id"))
-        private Set<Role> roles = new HashSet<>();
+        @ManyToOne
+        @JoinColumn(name = "idquiz")
+        private Quiz quiz;
         public Apprenant(String admin, String s, String encode) {
                 super(admin,s,encode);
         }

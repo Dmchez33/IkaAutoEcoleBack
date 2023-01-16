@@ -34,6 +34,10 @@ public class AdminAutoEcole extends Utilisateur {
             inverseJoinColumns = @JoinColumn(name = "role1_id"))
     private Set<Role> roles = new HashSet<>();
 
+    /*@ManyToOne
+    @JoinColumn(name = "idquiz")
+    private Quiz quiz;*/
+
     public AdminAutoEcole(String admin, String s, String encode, String datenaissance, String lieuxnaissance, String nomautoecole) {
         super(admin,s,encode);
         this.datenaissance = datenaissance;

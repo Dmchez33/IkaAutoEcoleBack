@@ -6,14 +6,17 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cours {
+public class Vehicule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
+    private String nomvehicule;
+    private String typevehicule;
+    private String marquevehicule;
+    private String image;
 
 }
