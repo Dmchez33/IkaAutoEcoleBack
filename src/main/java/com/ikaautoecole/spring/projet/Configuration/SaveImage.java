@@ -10,12 +10,25 @@ import java.util.Objects;
 
 public class SaveImage {
 
-    public static String localhost = "http://127.0.0.1/";
-    public static String serveruser = localhost + "apiikaautoecole/images/utilisateurs/";
-    public static String serveractivite = localhost + "apiikaautoecole/images/activites/";
+    public static String localhost = "http://192.168.137.208/";
 
-    public static String Activitelocation = "C:/xampp/htdocs/apiikaautoecole/images/activites";
+    public static String servercours = localhost + "apiikaautoecole/images/cours/";
+    public static String Courslocation = "C:/xampp/htdocs/apiikaautoecole/images/cours";
+
+    public static String servercontenu = localhost + "apiikaautoecole/images/contenu/";
+    public static String Contenulocation = "C:/xampp/htdocs/apiikaautoecole/images/contenu";
+
+    public static String servercontenuvocal = localhost + "apiikaautoecole/images/contenuvocal/";
+    public static String ContenuVocallocation = "C:/xampp/htdocs/apiikaautoecole/images/contenuvocal";
+
+    public static String serveruser = localhost + "apiikaautoecole/images/utilisateurs/";
     public static String Userlocation = "C:/xampp/htdocs/apiikaautoecole/images/utilisateurs";
+
+    public static String servertypecours = localhost + "apiikaautoecole/images/typecours/";
+    public static String TypeCourslocation= "C:/xampp/htdocs/apiikaautoecole/images/typecours";
+
+    public static String servervehicule = localhost + "apiikaautoecole/images/vehicule/";
+    public static String Vehiculelocation = "C:/xampp/htdocs/apiikaautoecole/images/vehicule";
 
     public static String save(String typeImage, MultipartFile file, String nomFichier) {
         String src = "";
@@ -24,9 +37,24 @@ public class SaveImage {
         if (typeImage == "user") {
             location = Userlocation;
             server = serveruser;
+        } else if (typeImage == "cours") {
+            location = Courslocation;
+            server = servercours;
+        } else if (typeImage == "contenu") {
+            location = Contenulocation;
+            server = servercontenu;
+        } else if (typeImage == "contenuvocal") {
+            location = ContenuVocallocation;
+            server = servercontenuvocal;
+        }else if (typeImage == "typeCours") {
+            location = TypeCourslocation;
+            server = servertypecours;
+        } else if (typeImage == "vehicule") {
+            location = Vehiculelocation;
+            server = servervehicule;
         } else {
-            location = Activitelocation;
-            server = serveractivite;
+            location = Courslocation;
+            server = servercours;
 
         }
 
@@ -39,21 +67,21 @@ public class SaveImage {
                 // si le fichier n'existe pas deja
                 Files.createDirectories(chemin);
                 Files.copy(file.getInputStream(), chemin
-                        .resolve(nomFichier + file.getOriginalFilename().substring(index).toLowerCase()));
-                src = server + nomFichier
-                        + file.getOriginalFilename().substring(index).toLowerCase();
+                        .resolve(nomFichier ));
+                src = server + nomFichier;
+                        //+ file.getOriginalFilename().substring(index).toLowerCase();
             } else {
                 // si le fichier existe pas deja
-                String newPath = location + nomFichier
-                        + file.getOriginalFilename().substring(index).toLowerCase();
+                String newPath = location + nomFichier;
+                        //+ file.getOriginalFilename().substring(index).toLowerCase();
                 Path newchemin = Paths.get(newPath);
                 if (!Files.exists(newchemin)) {
                     // si le fichier n'existe pas deja
                     Files.copy(file.getInputStream(), chemin
                             .resolve(
-                                    nomFichier + file.getOriginalFilename().substring(index).toLowerCase()));
-                    src = server + nomFichier
-                            + file.getOriginalFilename().substring(index).toLowerCase();
+                                    nomFichier ));
+                    src = server + nomFichier;
+                            //+ file.getOriginalFilename().substring(index).toLowerCase();
                 } else {
                     // si le fichier existe pas deja on le suprime et le recrèe
 
@@ -61,9 +89,9 @@ public class SaveImage {
 
                     Files.copy(file.getInputStream(), chemin
                             .resolve(
-                                    nomFichier + file.getOriginalFilename().substring(index).toLowerCase()));
-                    src = server + nomFichier
-                            + file.getOriginalFilename().substring(index).toLowerCase();
+                                    nomFichier));
+                    src = server + nomFichier;
+                            //+ file.getOriginalFilename().substring(index).toLowerCase();
                 }
 
             }

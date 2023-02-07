@@ -17,5 +17,7 @@ public class Adresse {
     private String quartier;
     private String telephone;
 
+    @ManyToOne
+    Autoecole autoecole;
 
 }

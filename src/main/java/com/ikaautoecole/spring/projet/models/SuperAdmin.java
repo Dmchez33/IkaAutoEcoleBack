@@ -26,14 +26,16 @@ import java.util.Set;
         })
 public class SuperAdmin extends Utilisateur {
 
+    private String telephone;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "roles",
             joinColumns = @JoinColumn(name = "admin_id"),
             inverseJoinColumns = @JoinColumn(name = "role1_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public SuperAdmin(String username, String email, String password) {
-
+    public SuperAdmin(String username, String email, String password,String telephone) {
         super(username,email,password);
+        this.telephone = telephone;
+
     }
 }

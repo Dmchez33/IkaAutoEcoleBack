@@ -1,13 +1,13 @@
 package com.ikaautoecole.spring.projet.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -22,16 +22,25 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         })
 public class Apprenant extends Utilisateur {
-        private String image;
+        private String nom;
+        private String prenom;
         private String telephone;
-        private String status;
+        private Date dateinscription;
 
         @ManyToOne
         Autoecole autoecole;
 
-        @ManyToOne
-        @JoinColumn(name = "idquiz")
-        private Quiz quiz;
+        @JsonIgnore
+        @ManyToMany(fetch = FetchType.LAZY,
+                cascade = {
+                        CascadeType.PERSIST,
+                        CascadeType.MERGE
+                })
+        @JoinTable(name = "apprenant_quiz",
+                joinColumns = { @JoinColumn(name = "apprenant_id") },
+                inverseJoinColumns = { @JoinColumn(name = "quiz_id") })
+        private List<Quiz> quiz;
+
         public Apprenant(String admin, String s, String encode) {
                 super(admin,s,encode);
         }

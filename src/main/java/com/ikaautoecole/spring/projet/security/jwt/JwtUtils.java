@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
@@ -27,6 +28,19 @@ public class JwtUtils {
 
   @Value("${bezkoder.app.jwtCookieName}")
   private String jwtCookie;
+
+  //****************** METHODE PERMETTANT DE GENERER LE TOKEN ************************
+  public String generateJwtToken(Authentication authentication) {
+
+    UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+
+    return Jwts.builder()
+            .setSubject((userPrincipal.getUsername()))
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .compact();
+  }
 
   //**************************************** METHODE PERMETTANT DE STOCKER LES TOKENS DANS LE COOKIE *********
   public String getJwtFromCookies(HttpServletRequest request) {

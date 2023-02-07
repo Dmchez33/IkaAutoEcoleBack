@@ -1,11 +1,9 @@
 package com.ikaautoecole.spring.projet.repository;
 
-import com.ikaautoecole.spring.projet.models.Cours;
+import com.ikaautoecole.spring.projet.models.ContenuCours;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CoursRepository extends JpaRepository<Cours,Long> {
-
-
+public interface CoursContenuRepository extends JpaRepository<ContenuCours,Long> {
 }

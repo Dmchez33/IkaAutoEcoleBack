@@ -37,6 +37,8 @@ public abstract class Utilisateur {
   @NotBlank
   @Size(max = 120)
   private String password;
+
+  private Boolean status = false;
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "admin_roles",
           joinColumns = @JoinColumn(name = "admin_id"),

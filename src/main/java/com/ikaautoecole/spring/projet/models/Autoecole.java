@@ -1,5 +1,6 @@
 package com.ikaautoecole.spring.projet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class Autoecole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
+    private Boolean status;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "autoecole_adresse",
@@ -24,7 +26,11 @@ public class Autoecole {
             inverseJoinColumns = @JoinColumn(name = "adresse_id"))
     List<Adresse> adresses = new ArrayList<>();
 
-    @OneToMany
+    //@JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "autoecole_vehicule",
+            joinColumns = @JoinColumn(name = "autoecole_id"),
+            inverseJoinColumns = @JoinColumn(name = "vehicule_id"))
     List<Vehicule> vehicules = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -33,7 +39,11 @@ public class Autoecole {
             inverseJoinColumns = @JoinColumn(name = "typecours_id"))
     List<TypeCours> typeCours = new ArrayList<>();
 
-    @OneToMany
+    //@JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "autoecole_apprenant",
+            joinColumns = @JoinColumn(name = "autoecole_id"),
+            inverseJoinColumns = @JoinColumn(name = "apprenant_id"))
     List<Apprenant> apprenants = new ArrayList<>();
 
     @ManyToOne

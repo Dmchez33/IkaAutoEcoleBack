@@ -5,29 +5,23 @@ import com.ikaautoecole.spring.projet.Configuration.SMSService;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
 import com.ikaautoecole.spring.projet.Configuration.SendEmail;
 import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
-import com.ikaautoecole.spring.projet.DTO.request.SuperAdminRequest;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.AdminAutoEcole;
 import com.ikaautoecole.spring.projet.models.ERole;
 import com.ikaautoecole.spring.projet.models.Role;
-import com.ikaautoecole.spring.projet.models.SuperAdmin;
 import com.ikaautoecole.spring.projet.repository.AdminautoecoleRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
-import com.ikaautoecole.spring.projet.repository.SuperAdminRepository;
-import com.ikaautoecole.spring.projet.services.AdminAutoEcoleDetailsServiceImpl;
+import com.ikaautoecole.spring.projet.services.AdminAutoEcoleServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.lang.reflect.Field;
 import java.util.*;
 
 @RestController
@@ -49,7 +43,7 @@ public class AdminAutoEcoleController {
     PasswordEncoder encoder;
 
     @Autowired
-    AdminAutoEcoleDetailsServiceImpl adminAutoEcoleDetailsService;
+    AdminAutoEcoleServiceImpl adminAutoEcoleDetailsService;
 
     @Autowired
     private SMSService smsService;
@@ -64,7 +58,7 @@ public class AdminAutoEcoleController {
 
     //METHODE PERMETTANT L'AJOUT D'UN NOUVEAU COLLABORATEUR
     @PostMapping("/createUtilisateur")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    //@PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> create(@RequestParam(value = "data") String signUpRequest1, @RequestParam(value = "file", required = false) MultipartFile file) {
 
         try {
@@ -111,7 +105,7 @@ public class AdminAutoEcoleController {
             }
 
             if (file != null) {
-                System.out.println("ggggg");
+
                 user.setImage(SaveImage.save("activite", file, user.getUsername()));
             }
 

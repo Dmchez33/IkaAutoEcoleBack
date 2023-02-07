@@ -19,4 +19,7 @@ public class Vehicule {
     private String marquevehicule;
     private String image;
 
+    @ManyToOne
+    Autoecole autoecolee;
+
 }

@@ -12,19 +12,17 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String libelle;
-
-    private String bonnereponse;
+    private String question;
 
     @ManyToOne
-    Quiz quiz;
+    @JoinColumn(name = "question_quiz")
+    private Quiz quiz;
 
     @ManyToMany
     @JoinTable(
-            name = "question_mauvaise_reponse",
+            name = "question_reponse",
             joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "mr_id")
+            inverseJoinColumns = @JoinColumn(name = "reponse_id")
     )
-    List<MauvaiseReponse> mauvaiseReponses = new ArrayList<>();
+    List<Reponse> Reponses = new ArrayList<>();
 }

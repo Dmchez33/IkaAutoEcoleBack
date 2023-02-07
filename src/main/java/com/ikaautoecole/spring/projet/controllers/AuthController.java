@@ -3,6 +3,8 @@ package com.ikaautoecole.spring.projet.controllers;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.ikaautoecole.spring.projet.DTO.response.JwtResponse;
+import com.ikaautoecole.spring.projet.DTO.response.UserInfoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,7 @@ public class AuthController {
 
     //ON GENERE LE TOKEN EN LE STOCKANT DIRECTEMENT DANS UN COOKIE
     ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-
+    String jwt = jwtUtils.generateJwtToken(authentication);
     List<String> roles = userDetails.getAuthorities().stream()
             .map(item -> item.getAuthority())
             .collect(Collectors.toList());
@@ -71,8 +73,19 @@ public class AuthController {
     });
 
     Log.info("VOUS ETES AUTHENTIFIE AVEC SUCCESS");
-    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-            .body("BIENVENU "+entite.toString().substring(1, entite.toString().length()-1));
+
+    //METHODE PERMETTANT DE RETOURNER LES INFOS DE USER ET DE STOCKER LE JWT DANS LE COOKIES DE POSTMAN
+     ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            .body(new UserInfoResponse(userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    roles));
+    //On RETOURNE LE TOKEN ET LES INFOS DE UTILISATEURS
+    return ResponseEntity.ok(new JwtResponse(jwt,
+            userDetails.getId(),
+            userDetails.getUsername(),
+            userDetails.getEmail(),
+            roles));
 
   }
 

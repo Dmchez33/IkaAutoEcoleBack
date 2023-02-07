@@ -63,7 +63,7 @@ public class SuperAdminController {
         // CREATION D'UNE INSTANCE DE COLLABORATEUR
         SuperAdmin user = new SuperAdmin(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),"83252448");
 
         //RECUPERATION DES ROLES DU COLLABORATEUR
         Set<String> strRoles = signUpRequest.getRole();
