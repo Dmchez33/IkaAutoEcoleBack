@@ -19,6 +19,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/apprenant")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class ApprenantController {
 
 
@@ -37,12 +38,20 @@ public class ApprenantController {
     @PostMapping("/save")
     public ResponseEntity<?> saveApprenant(@RequestBody Apprenant apprenant){
         if (apprenantRepository.existsByUsername(apprenant.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Erreur: ce nom d'utilisateur existe deja!"));
+            return ResponseEntity.badRequest().body(new MessageResponse(" ce nom d'utilisateur existe deja!"));
         }
 
         //VERIFICATION DE L'EXISTANCE DE L'EMAIL
         if (apprenantRepository.existsByEmail(apprenant.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Erreur: Cet email existe deja!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Cet email existe deja!"));
+        }
+
+        if (apprenant.getEmail() == ""){
+            return ResponseEntity.badRequest().body(new MessageResponse("Email ne doit pas être vide!"));
+        }
+
+        if (apprenant.getTelephone() == ""){
+            return ResponseEntity.badRequest().body(new MessageResponse("Le numero ne doit pas être vide!"));
         }
         apprenant.setDateinscription(new Date());
         Set<Role> roles = new HashSet<>();
@@ -50,7 +59,8 @@ public class ApprenantController {
         roles.add(role);
         apprenant.setRoles(roles);
         apprenant.setPassword(encoder.encode(apprenant.getPassword()));
-        return ResponseEntity.ok().body( apprenantService.saveApprenant(apprenant));
+        apprenantService.saveApprenant(apprenant);
+        return ResponseEntity.ok().body( new MessageResponse("Ok"));
     }
 
     @GetMapping("/getapprenant")

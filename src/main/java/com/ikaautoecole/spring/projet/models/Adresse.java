@@ -1,5 +1,6 @@
 package com.ikaautoecole.spring.projet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,12 +12,10 @@ public class Adresse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    private String longitude;
-    private String latitude;
     private String ville;
     private String quartier;
-    private String telephone;
 
+    @JsonIgnore
     @ManyToOne
     Autoecole autoecole;
 

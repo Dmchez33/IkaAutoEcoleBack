@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class SaveImage {
 
-    public static String localhost = "http://192.168.137.208/";
+    public static String localhost = "http://192.168.43.58/";
 
     public static String servercours = localhost + "apiikaautoecole/images/cours/";
     public static String Courslocation = "C:/xampp/htdocs/apiikaautoecole/images/cours";
@@ -20,6 +20,9 @@ public class SaveImage {
 
     public static String servercontenuvocal = localhost + "apiikaautoecole/images/contenuvocal/";
     public static String ContenuVocallocation = "C:/xampp/htdocs/apiikaautoecole/images/contenuvocal";
+
+    public static String serverpanneauxconduite = localhost + "apiikaautoecole/images/contenuvocal/";
+    public static String Panneauxconduitelocation = "C:/xampp/htdocs/apiikaautoecole/images/contenuvocal";
 
     public static String serveruser = localhost + "apiikaautoecole/images/utilisateurs/";
     public static String Userlocation = "C:/xampp/htdocs/apiikaautoecole/images/utilisateurs";
@@ -52,7 +55,10 @@ public class SaveImage {
         } else if (typeImage == "vehicule") {
             location = Vehiculelocation;
             server = servervehicule;
-        } else {
+        } else if (typeImage == "panneauxConduite") {
+            location = Panneauxconduitelocation;
+            server = serverpanneauxconduite;
+        }else {
             location = Courslocation;
             server = servercours;
 
@@ -60,7 +66,7 @@ public class SaveImage {
 
         /// debut de l'enregistrement
         try {
-            int index = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
+            //int index = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
 
             Path chemin = Paths.get(location);
             if (!Files.exists(chemin)) {
@@ -84,7 +90,7 @@ public class SaveImage {
                             //+ file.getOriginalFilename().substring(index).toLowerCase();
                 } else {
                     // si le fichier existe pas deja on le suprime et le recrèe
-
+                    System.err.println("zone fichier existe deja");
                     Files.delete(newchemin);
 
                     Files.copy(file.getInputStream(), chemin

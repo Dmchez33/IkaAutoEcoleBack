@@ -21,10 +21,9 @@ import java.util.Set;
 @SelectBeforeUpdate
 @DynamicUpdate
 public class AdminAutoEcole extends Utilisateur {
-    private String datenaissance;
-    private String lieuxnaissance;
     private String image;
-    private String nomautoecole;
+    private String nom;
+    private String prenom;
     private String telephone;
     private Boolean etat;
 
@@ -38,10 +37,8 @@ public class AdminAutoEcole extends Utilisateur {
     @JoinColumn(name = "idquiz")
     private Quiz quiz;*/
 
-    public AdminAutoEcole(String admin, String s, String encode, String datenaissance, String lieuxnaissance, String nomautoecole) {
-        super(admin,s,encode);
-        this.datenaissance = datenaissance;
-        this.lieuxnaissance = lieuxnaissance;
-        this.nomautoecole = nomautoecole;
+    public AdminAutoEcole(String username, String email, String password) {
+        super(username,email,password);
+
     }
 }

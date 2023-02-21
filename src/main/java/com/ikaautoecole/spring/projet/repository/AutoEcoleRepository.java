@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface AutoEcoleRepository extends JpaRepository<Autoecole, Long> {
     //Boolean existsByAdressesAndNom(List<Adresse> adresse, String nom);
+
+    List<Autoecole> findAutoecoleByAdresses(Adresse adresse);
 }

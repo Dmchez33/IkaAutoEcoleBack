@@ -6,15 +6,13 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class TypeCours {
+public class VideoForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
-    private String nomcours;
-    private String image;
+    private String url;
+    private String description;
 
     @ManyToOne
     Autoecole autoecole;
-
 }

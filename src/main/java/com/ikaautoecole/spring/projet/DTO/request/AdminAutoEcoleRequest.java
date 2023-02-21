@@ -23,14 +23,9 @@ public class AdminAutoEcoleRequest {
     @NotBlank
     @Size(min = 6, max = 40)
     private String password;
-
-    private String datenaissance;
-
-    private String lieuxnaissance;
+    private String prenom;
+    private String nom;
+    private String telephone;
 
     private String image;
-
-    private String nomautoecole;
-
-    private Boolean etat;
 }

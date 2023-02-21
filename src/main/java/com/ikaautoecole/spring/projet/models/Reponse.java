@@ -1,5 +1,6 @@
 package com.ikaautoecole.spring.projet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,13 +22,13 @@ public class Reponse {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne
+/*    @ManyToOne
     @JoinColumn(name = "apprenant_id")
     private Apprenant apprenant;
 
     @ManyToOne
     @JoinColumn(name = "apprenant_quiz_id")
-    private ApprenantQuiz apprenantQuiz;
+    private ApprenantQuiz apprenantQuiz;*/
     //getters and setters
 
 }

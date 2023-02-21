@@ -43,9 +43,11 @@ class SecuComApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		//VERIFICATION DE L'EXISTANCE DU ROLE ADMIN AVANT SA CREATION
 		if (roleRepository.findAll().size() == 0){
+
 			roleRepository.save(new Role(ERole.ROLE_SUPER_ADMIN));
 			roleRepository.save(new Role(ERole.ROLE_ADMIN_AUTOECOLE));
 			roleRepository.save(new Role(ERole.ROLE_APPRENANT));
+
 		}
 		if (superAdminRepository.findAll().size() == 0){
 			Set<Role> roles = new HashSet<>();
@@ -59,7 +61,7 @@ class SecuComApplication implements CommandLineRunner {
 			Set<Role> roles = new HashSet<>();
 			Role role = roleRepository.findByName(ERole.ROLE_ADMIN_AUTOECOLE);
 			roles.add(role);
-			AdminAutoEcole collaborateur1 = new AdminAutoEcole("idriss","idriss@gmail.com", encoder.encode("12345678"),"12-12-2020","bamako","kanaga");
+			AdminAutoEcole collaborateur1 = new AdminAutoEcole("idriss","idriss@gmail.com", encoder.encode("12345678"));
 			collaborateur1.setRoles(roles);
 			adminautoecoleRepository.save(collaborateur1);
 		}

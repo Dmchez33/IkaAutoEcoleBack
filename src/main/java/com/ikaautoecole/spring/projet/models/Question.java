@@ -1,5 +1,6 @@
 package com.ikaautoecole.spring.projet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,16 +14,12 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String question;
-
+    private String imageQuiz;
     @ManyToOne
     @JoinColumn(name = "question_quiz")
     private Quiz quiz;
 
-    @ManyToMany
-    @JoinTable(
-            name = "question_reponse",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "reponse_id")
-    )
+    @JsonIgnore
+    @OneToMany
     List<Reponse> Reponses = new ArrayList<>();
 }

@@ -31,17 +31,10 @@ public class Apprenant extends Utilisateur {
         Autoecole autoecole;
 
         @JsonIgnore
-        @ManyToMany(fetch = FetchType.LAZY,
-                cascade = {
-                        CascadeType.PERSIST,
-                        CascadeType.MERGE
-                })
-        @JoinTable(name = "apprenant_quiz",
-                joinColumns = { @JoinColumn(name = "apprenant_id") },
-                inverseJoinColumns = { @JoinColumn(name = "quiz_id") })
-        private List<Quiz> quiz;
-
+        @ManyToOne
+        private Quiz quiz;
         public Apprenant(String admin, String s, String encode) {
                 super(admin,s,encode);
         }
+
 }

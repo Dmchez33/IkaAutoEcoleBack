@@ -34,12 +34,10 @@ public class AdresseServiceImpl {
             return "Cette autoecole n'existe pas";
         }*/
         //adresse.setAutoecole(autoecole);
-        if (adresseRepository.existsByLatitudeAndLongitude(adresse.getLatitude(), adresse.getLongitude())) {
-            return "Cette adresse est déjà prix";
-        } else {
+
             adresseRepository.save(adresse);
             return "ADRESSE ENREGISTRER AVEC SUCCES";
-        }
+        //}
     }
 
     //METHODE PERMETTANT DE METTRE A JOUR UNE ADRESSE

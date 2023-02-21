@@ -9,9 +9,12 @@ import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.AdminAutoEcole;
 import com.ikaautoecole.spring.projet.models.ERole;
 import com.ikaautoecole.spring.projet.models.Role;
+import com.ikaautoecole.spring.projet.models.TypeCours;
 import com.ikaautoecole.spring.projet.repository.AdminautoecoleRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
+import com.ikaautoecole.spring.projet.repository.TypeCoursRepository;
 import com.ikaautoecole.spring.projet.services.AdminAutoEcoleServiceImpl;
+import com.ikaautoecole.spring.projet.services.TypeCoursServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/adminAutoEcole")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AdminAutoEcoleController {
 
     private static final Logger Log = LoggerFactory.getLogger(AdminAutoEcoleController.class);
@@ -48,9 +52,12 @@ public class AdminAutoEcoleController {
     @Autowired
     private SMSService smsService;
 
+    @Autowired
+    TypeCoursServiceImpl typeCoursService;
+
     //METHODE PERMETTANT DE RECUPERER TOUS LES UTILISATEURS
     @GetMapping("/getAll")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public List<AdminAutoEcole> get() {
         Log.info("RECUPERATION DE TOUT LES COLLABORATEUR");
         return adminautoecoleRepository.findAll();
@@ -79,7 +86,7 @@ public class AdminAutoEcoleController {
             // CREATION D'UNE INSTANCE DE COLLABORATEUR
             AdminAutoEcole user = new AdminAutoEcole(signUpRequest.getUsername(),
                     signUpRequest.getEmail(),
-                    encoder.encode(signUpRequest.getPassword()), signUpRequest.getDatenaissance(), signUpRequest.getLieuxnaissance(), signUpRequest.getNomautoecole());
+                    encoder.encode(signUpRequest.getPassword()));
 
             //RECUPERATION DES ROLES DU COLLABORATEUR
             Set<String> strRoles = signUpRequest.getRole();
@@ -111,11 +118,14 @@ public class AdminAutoEcoleController {
 
             user.setRoles(roles);
             user.setEtat(false);
+            user.setNom(signUpRequest.getNom());
+            user.setPrenom(signUpRequest.getPrenom());
+            user.setTelephone(signUpRequest.getTelephone());
             sendEmail.sendWelcomeEmail(signUpRequest.getEmail(), signUpRequest.getUsername());
-            smsService.sendSMS("+22370446711", "Votre inscription a été effectué avec success");
+            smsService.sendSMS(signUpRequest.getTelephone(), "Votre inscription a été effectué avec success");
             adminautoecoleRepository.save(user);
 
-            return ResponseEntity.ok(new MessageResponse("AdminAutoEcole creer avec success!"));
+            return ResponseEntity.ok(new MessageResponse("Ok"));
         } catch (Exception e) {
             return ResponseEntity.ok(new MessageResponse("Erreur lors de creation de l'admin"));
         }
@@ -129,7 +139,6 @@ public class AdminAutoEcoleController {
         Log.info("MODIFICATION D'UN COLLABORATEUR");
 
         return adminautoecoleRepository.findById(id).map(
-
                 signUpRequest1 -> {
                     signUpRequest1.setUsername(signUpRequest.getUsername());
                     signUpRequest1.setPassword(encoder.encode(signUpRequest.getPassword()));
@@ -180,5 +189,9 @@ public class AdminAutoEcoleController {
     public AdminAutoEcole updateEtat(@PathVariable("id") Long id, @RequestBody Map<String, Object> updates) {
         return adminAutoEcoleDetailsService.updatePartial(id, updates);
     }
+
+
+
+    //**************************************METHODE CONCERNANT LA RESERVATION DES COURS AU PRES DES AUTOECOLE
 
 }

@@ -3,8 +3,11 @@ package com.ikaautoecole.spring.projet.controllers;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
 import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
+import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.ContenuCours;
 import com.ikaautoecole.spring.projet.models.Cours;
+import com.ikaautoecole.spring.projet.models.TypeCours;
+import com.ikaautoecole.spring.projet.repository.TypeCoursRepository;
 import com.ikaautoecole.spring.projet.services.CoursServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +19,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cours")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class CoursController {
     @Autowired
     CoursServiceImpl coursService;
+
+
 
     @GetMapping("/getCours")
     public List<Cours> get(){
@@ -60,28 +65,35 @@ public class CoursController {
 
     //POST CONTENU
     @PostMapping("/postContenu")
-    public String postContenu(@RequestParam(value = "contenu") String Contenu,@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam(value = "audio", required = false) MultipartFile audio){
+    public ResponseEntity<?> postContenu(@RequestParam(value = "contenu") String Contenu,@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam(value = "audio", required = false) MultipartFile audio){
         try {
             ContenuCours contenuCours = new JsonMapper().readValue(Contenu, ContenuCours.class);
             if (file != null) {
                 System.out.println("Enregistrement de l'image");
                 //String nomImage[] = file.getOriginalFilename().split(".");
                 contenuCours.setImage(SaveImage.save("contenu", file, file.getOriginalFilename()));
+
+            }else{
+                return ResponseEntity.ok().body( new MessageResponse("VEILLEZ SELECTIONNER UNE IMAGE"));
             }
             if (audio != null) {
                 System.out.println("Enregistrement de l'audio");
                 //String nomvocal[] = audio.getOriginalFilename().split(".");
                 contenuCours.setVocal(SaveImage.save("contenuvocal", audio,audio.getOriginalFilename() ));
+            }else{
+                return ResponseEntity.ok().body( new MessageResponse("VEILLEZ SELECTIONNER UN AUDIO"));
             }
             coursService.saveContenu(contenuCours);
-            return "cours ajouter avec succes";
+            return ResponseEntity.ok().body( new MessageResponse("Ok")) ;
         }catch (Exception e){
-            return e.getMessage();
+            return ResponseEntity.ok().body(e.getMessage());
         }
 
     }
 
     //UDATE CONTENU COURS
+
+
 
 
 

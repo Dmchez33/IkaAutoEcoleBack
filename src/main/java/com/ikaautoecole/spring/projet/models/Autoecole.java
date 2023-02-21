@@ -18,6 +18,11 @@ public class Autoecole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
+    private String longitude;
+    private String latitude;
+    private String telephone;
+    private String rue;
+    private String porte;
     private Boolean status;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -33,6 +38,7 @@ public class Autoecole {
             inverseJoinColumns = @JoinColumn(name = "vehicule_id"))
     List<Vehicule> vehicules = new ArrayList<>();
 
+    //@JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "autoecole_type_cours",
             joinColumns = @JoinColumn(name = "autoecole_id"),
@@ -49,5 +55,8 @@ public class Autoecole {
     @ManyToOne
     AdminAutoEcole adminAutoEcole;
 
+    @JsonIgnore
+    @OneToMany
+    List<VideoForm> videoForms = new ArrayList<>();
 
 }

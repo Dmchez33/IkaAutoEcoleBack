@@ -9,6 +9,6 @@ public interface ApprenantRepository extends JpaRepository<Apprenant, Long> {
     Optional<Apprenant> findByUsername(String username);
 
     Boolean existsByUsername(String username);
-
+    Boolean existsByTelephone(String telephone);
     Boolean existsByEmail(String email);
 }

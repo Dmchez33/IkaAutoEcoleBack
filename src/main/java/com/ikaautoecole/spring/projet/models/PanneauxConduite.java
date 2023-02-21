@@ -1,27 +1,26 @@
 package com.ikaautoecole.spring.projet.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-public class ContenuCours {
+@Data
+@Getter
+@Setter
+public class PanneauxConduite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    private String titre;
+    private String nom;
     @Lob
     private String description;
     private String vocal;
     private String image;
 
     @ManyToOne
-    Cours cours;
+    TypePanneaux typePanneaux;
+
 }

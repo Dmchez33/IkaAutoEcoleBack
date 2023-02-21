@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -18,17 +19,15 @@ public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String libelle;
-    private int nombreQuestion;
+    private String titre;
+    private String description;
+    private String imageName;
+    private Date quizDate;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            mappedBy = "quiz",
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    private List<Apprenant> apprenant;
+    /*@OneToMany
+    private List<Apprenant> apprenant;*/
 
+    @JsonIgnore
     @OneToMany
     List<Question> questions = new ArrayList<>();
 

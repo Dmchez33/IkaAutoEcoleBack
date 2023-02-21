@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdresseRepository extends JpaRepository<Adresse, Long> {
 
-    Boolean existsByLatitudeAndLongitude(String Latitude, String Longitude);
+    //Boolean existsByLatitudeAndLongitude(String Latitude, String Longitude);
+    Adresse findByQuartier(String quartier);
 }
