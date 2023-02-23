@@ -49,10 +49,11 @@ public class PanneauxController {
             }else {
                 return ResponseEntity.ok().body(new MessageResponse("Veuillez selectionner un audio"));
             }
+            System.err.println(panneauxConduite1);
             panneauxService.CreatePanneaux(panneauxConduite1);
             return ResponseEntity.ok().body(new MessageResponse("Ok"));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(new MessageResponse("ERREUR LORS DE L'ENVOIE DE LA SOLUTION"));
+            return ResponseEntity.ok().body(new MessageResponse("ERREUR LORS DE L'ENVOIE DE LA SOLUTION"));
         }
 
     }

@@ -184,6 +184,11 @@ public class AdminAutoEcoleController {
 
     }
 
+    @GetMapping("/getById/{id}")
+    public AdminAutoEcole getById(@PathVariable("id") Long id){
+        return adminautoecoleRepository.getReferenceById(id);
+    }
+
     //+++++++++++++++++++++++++++++++++++++++METHODE PERMETTANT D'ACTIVER LE COMPTE D'UN UTILSATEUR +++++++++++++++++++++++++++++++++++++++++++++++++
     @PatchMapping("/update/{id}")
     public AdminAutoEcole updateEtat(@PathVariable("id") Long id, @RequestBody Map<String, Object> updates) {

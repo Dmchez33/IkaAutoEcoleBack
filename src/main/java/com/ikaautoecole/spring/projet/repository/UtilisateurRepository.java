@@ -1,5 +1,6 @@
 package com.ikaautoecole.spring.projet.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
   /*Boolean existsByUsername(String username);
 
   Boolean existsByEmail(String email);*/
+
+  List<Utilisateur> findByStatus(Boolean status);
 }
