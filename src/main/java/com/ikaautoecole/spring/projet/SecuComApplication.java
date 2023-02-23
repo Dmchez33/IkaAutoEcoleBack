@@ -57,14 +57,7 @@ class SecuComApplication implements CommandLineRunner {
 			collaborateur.setRoles(roles);
 			superAdminRepository.save(collaborateur);
 		}
-		if (adminautoecoleRepository.findAll().size() == 0){
-			Set<Role> roles = new HashSet<>();
-			Role role = roleRepository.findByName(ERole.ROLE_ADMIN_AUTOECOLE);
-			roles.add(role);
-			AdminAutoEcole collaborateur1 = new AdminAutoEcole("idriss","idriss@gmail.com", encoder.encode("12345678"));
-			collaborateur1.setRoles(roles);
-			adminautoecoleRepository.save(collaborateur1);
-		}
+
 	}
 }
 
