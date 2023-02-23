@@ -53,6 +53,9 @@ public class ApprenantController {
         if (apprenant.getTelephone() == ""){
             return ResponseEntity.badRequest().body(new MessageResponse("Le numero ne doit pas être vide!"));
         }
+        if(apprenantRepository.existsByTelephone(apprenant.getTelephone())){
+            return ResponseEntity.badRequest().body(new MessageResponse("Ce numero existe déjà "));
+        }
         apprenant.setDateinscription(new Date());
         Set<Role> roles = new HashSet<>();
         Role role = roleRepository.findByName(ERole.ROLE_APPRENANT);

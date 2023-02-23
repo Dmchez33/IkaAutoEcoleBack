@@ -7,6 +7,8 @@ import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.ContenuCours;
 import com.ikaautoecole.spring.projet.models.Cours;
 import com.ikaautoecole.spring.projet.models.TypeCours;
+import com.ikaautoecole.spring.projet.repository.CoursContenuRepository;
+import com.ikaautoecole.spring.projet.repository.CoursRepository;
 import com.ikaautoecole.spring.projet.repository.TypeCoursRepository;
 import com.ikaautoecole.spring.projet.services.CoursServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,12 @@ public class CoursController {
     @Autowired
     CoursServiceImpl coursService;
 
+    @Autowired
+    CoursRepository coursRepository;
 
 
+    @Autowired
+    CoursContenuRepository contenuRepository;
     @GetMapping("/getCours")
     public List<Cours> get(){
         return coursService.getCours();
@@ -44,10 +50,19 @@ public class CoursController {
                 System.out.println("Enregistrement du fichier");
                 cours1.setImage(SaveImage.save("cours", file, file.getOriginalFilename()));
             }
+            else {
+                return ResponseEntity.ok().body(new MessageResponse("Veuillez selectionner une image"));
+            }
 
-            return ResponseEntity.ok().body(coursService.saveCours(cours1));
+            if (cours1.getLibelle() == "")
+            {
+                return ResponseEntity.ok().body(new MessageResponse("Veuillez donner le nom du cours"));
+            }
+            coursService.saveCours(cours1);
+
+            return ResponseEntity.ok().body(new MessageResponse("Ok"));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.ok().body(new MessageResponse(e.getMessage()));
         }
 
     }
@@ -93,6 +108,11 @@ public class CoursController {
 
     //UDATE CONTENU COURS
 
+    @GetMapping("/getContenuByCour/{id}")
+    public List<ContenuCours> getcontenuCourByCours(@PathVariable("id") Long id){
+        Cours cours = coursRepository.getReferenceById(id);
+        return contenuRepository.findContenuCoursByCours(cours);
+    }
 
 
 
