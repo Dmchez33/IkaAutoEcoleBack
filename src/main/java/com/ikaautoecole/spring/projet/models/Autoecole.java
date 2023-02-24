@@ -18,8 +18,6 @@ public class Autoecole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
-    private String longitude;
-    private String latitude;
     private String telephone;
     private String rue;
     private String porte;

@@ -14,7 +14,8 @@ public class Adresse {
     private Long id;
     private String ville;
     private String quartier;
-
+    private String longitude;
+    private String latitude;
     @JsonIgnore
     @ManyToOne
     Autoecole autoecole;
