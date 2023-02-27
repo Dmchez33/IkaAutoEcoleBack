@@ -12,4 +12,7 @@ public interface AutoEcoleRepository extends JpaRepository<Autoecole, Long> {
     //Boolean existsByAdressesAndNom(List<Adresse> adresse, String nom);
 
     List<Autoecole> findAutoecoleByAdresses(Adresse adresse);
+    Autoecole  findByRue(String rue);
+    Autoecole findByPorte(String porte);
+    //LisAutoecole findByAdresses(List<Adresse> adresses);
 }

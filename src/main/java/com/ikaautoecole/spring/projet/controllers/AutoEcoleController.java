@@ -1,10 +1,8 @@
 package com.ikaautoecole.spring.projet.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
-import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
+import com.ikaautoecole.spring.projet.Configuration.SendEmail;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.*;
 import com.ikaautoecole.spring.projet.repository.*;
@@ -52,6 +50,9 @@ public class AutoEcoleController {
     @Autowired
     ReservationRepository reservationRepository;
 
+    @Autowired
+    SendEmail sendEmail;
+
     //RETOURNE TOUTES LES AUTOECOLES
     @GetMapping("/getAll")
     public List<Autoecole> get(){
@@ -68,10 +69,38 @@ public class AutoEcoleController {
         {
             autoecole.setAdminAutoEcole(adminAutoEcole);
         }
+
+        if(autoEcoleRepository.findByPorte(autoecole.getPorte()) != null){
+            return ResponseEntity.ok().body(new MessageResponse("Ce numéro de porte est déjà prise"));
+
+        }
+
+        if(autoEcoleRepository.findByRue(autoecole.getRue()) != null){
+            return ResponseEntity.ok().body(new MessageResponse("Ce numéro de rue est déjà prise"));
+
+        }
+
+        if(autoecole.getPorte() == ""){
+            return ResponseEntity.ok().body(new MessageResponse("Veuillez indiquer le numéro de porte."));
+ 
+        }
+
+        if(autoecole.getRue() == ""){
+            return ResponseEntity.ok().body(new MessageResponse("Veuillez indiquer le numéro de rue."));
+ 
+        }
+        if(autoecole.getNom() == ""){
+            return ResponseEntity.ok().body(new MessageResponse("Veuillez indiquer le nomde l'auto-école."));
+ 
+        }
+        if(autoecole.getAdresses() == null){
+            return ResponseEntity.ok().body(new MessageResponse("Veuillez indiquer l'adresse de l'autoécole."));
+ 
+        }
         /*if (autoEcoleRepository.existsByAdressesAndNom(autoecole.getAdresses(),autoecole.getNom())){
             return ResponseEntity.badRequest().body("Cette adresse est déjà pris");
-        }*/
-        return ResponseEntity.ok().body(autoEcoleService.saveAutoEcole(autoecole));
+        }*/autoEcoleService.saveAutoEcole(autoecole);
+        return ResponseEntity.ok().body(new MessageResponse("Ok"));
     }
 
     //METTRE A JOUR UNE AUTOECOLE
@@ -107,7 +136,44 @@ public class AutoEcoleController {
     //AJOUTER UNE ADRESSE
     @PostMapping("/addAdresse")
     public ResponseEntity<?> ajouterAdresse(@RequestBody Adresse adresse){
-        return ResponseEntity.ok().body(adresseService.saveAdresse(adresse));
+        if(adresseRepository.findByLatitude(adresse.getLatitude())!=null){
+            return ResponseEntity.ok().body(new MessageResponse("Cette Latitude existe déjà"));
+
+        }
+
+        if(adresseRepository.findByLongitude(adresse.getLongitude())!=null){
+            return ResponseEntity.ok().body(new MessageResponse("Cette longitude existe déjà"));
+
+        }
+        if(adresseRepository.findByQuartier(adresse.getQuartier())!=null){
+            return ResponseEntity.ok().body(new MessageResponse("Ce quartier existe déjà"));
+
+        }
+        // if(adresseRepository.findByVille(adresse.getVille())!=null){
+        //     return ResponseEntity.ok().body(new MessageResponse("Cette Ville existe déjà"));
+
+        // }
+
+
+        if(adresse.getQuartier() == ""){
+            return ResponseEntity.ok().body(new MessageResponse("Le quartier est obligatoire"));
+
+        }
+        if(adresse.getVille()==""){
+            return ResponseEntity.ok().body(new MessageResponse("la ville est obligatoire"));
+
+        }
+        if(adresse.getLatitude() == ""){
+            return ResponseEntity.ok().body(new MessageResponse("La Latitude est obligatoire"));
+
+        }
+        if(adresse.getLongitude()==""){
+            return ResponseEntity.ok().body(new MessageResponse("la Longitude est obligatoire"));
+
+        }
+        adresseService.saveAdresse(adresse);
+        return ResponseEntity.ok().body(new MessageResponse("Ok"));
+
     }
 
     //METTRE A JOUR UNE AUTOECOLE
@@ -136,11 +202,21 @@ public class AutoEcoleController {
 
             if (file != null) {
 
-                vehicule1.setImage(SaveImage.save("vehicule", file, vehicule1.getNomvehicule()));
+                vehicule1.setImage(SaveImage.save("image", file, file.getOriginalFilename()));
             }
-            return ResponseEntity.ok().body(vehiculeService.AddVehicule(vehicule1));
+            if(vehicule1.getMarquevehicule()==""){
+                return ResponseEntity.ok().body(new MessageResponse("la marque du véhicule est obligatoire"));
+
+            }
+            
+            if(vehicule1.getTypevehicule()==""){
+                return ResponseEntity.ok().body(new MessageResponse("Le type du véhicule est obligatoire"));
+
+            }
+            vehiculeService.AddVehicule(vehicule1);
+            return ResponseEntity.ok().body(new MessageResponse("Ok"));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.ok().body(new MessageResponse(e.getMessage()));
         }
 
     }
@@ -175,6 +251,9 @@ public class AutoEcoleController {
             }else {
                 return ResponseEntity.ok().body(new MessageResponse("Veillez selectionner une image"));
             }
+            if(typeCours1.getNomcours() == ""){
+                return ResponseEntity.ok().body(new MessageResponse("Veuillez entrer le nom du cours"));
+            }
             typeCoursService.saveCours(typeCours1);
             return ResponseEntity.ok().body(new MessageResponse("Ok"));
         }catch (Exception e){
@@ -190,31 +269,34 @@ public class AutoEcoleController {
     //METHODE UTILISER POUR RESERVER DES COURS AUPRES DES AUTOECOLES;
 
     @PostMapping("/reserverCours/{idAutoEcole}/{idApprenant}")
-    public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @PathVariable("idApprenant") Long idApprenant, @RequestBody Reservation reservation){
-        Apprenant apprenant = apprenantRepository.getReferenceById(idApprenant);
-        Autoecole autoecole = autoEcoleRepository.getReferenceById(id);
-        Reservation reservation1 = reservationRepository.findByApprenantAndAutoEcole(apprenant, autoecole);
-        if (apprenant != null){
-            reservation.setApprenant(apprenant);
-        }else {
-            return ResponseEntity.ok().body(new MessageResponse("Ereeur lors du choix de l'utilisateur"));
-        }
+public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @PathVariable("idApprenant") Long idApprenant, @RequestBody Reservation reservation){
+   Apprenant apprenant = apprenantRepository.getReferenceById(idApprenant);
+   Autoecole autoecole = autoEcoleRepository.getReferenceById(id);
+   Reservation reservation1 = reservationRepository.findByApprenantAndAutoEcole(apprenant, autoecole);
+   if (apprenant != null){
+       reservation.setApprenant(apprenant);
+   }else {
+       return ResponseEntity.ok().body(new MessageResponse("Ereeur lors du choix de l'utilisateur"));
+   }
 
-        if (autoecole != null){
-            reservation.setAutoEcole(autoecole);
-        }else {
-            return ResponseEntity.ok().body(new MessageResponse("Erreur lors du selection de l'autoecole"));
-        }
+   if (autoecole != null){
+       reservation.setAutoEcole(autoecole);
+   }else {
+       return ResponseEntity.ok().body(new MessageResponse("Erreur lors du selection de l'autoecole"));
+   }
 
 
-        if (reservation1 != null){
-            return ResponseEntity.ok().body(new MessageResponse("Vous avez déjà reserver le cours pour cette autoécole"));
-        }else{
-            reserverCoursService.faireReservation(reservation);
-            return ResponseEntity.ok().body(new MessageResponse("COurs ajouter avec succes"));
-        }
+   if (reservation1 != null){
+       return ResponseEntity.ok().body(new MessageResponse("Vous avez déjà reserver le cours pour cette autoécole"));
+   }else{
+       reservation.setEtat(EtatReservation.ATTENTE);
+       sendEmail.MessageReservationEncoursDeTraitement(apprenant.getEmail(), apprenant.getPrenom(), autoecole.getNom());
+       reserverCoursService.faireReservation(reservation);
+       return ResponseEntity.ok().body(new MessageResponse("Ok"));
+   }
 
-    }
+}
+
 
 
 }

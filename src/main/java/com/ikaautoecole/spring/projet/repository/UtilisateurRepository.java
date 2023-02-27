@@ -12,9 +12,9 @@ import com.ikaautoecole.spring.projet.models.Utilisateur;
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
   Optional<Utilisateur> findByUsername(String username);
 
-  /*Boolean existsByUsername(String username);
+  Boolean existsByUsername(String username);
 
-  Boolean existsByEmail(String email);*/
+  Boolean existsByEmail(String email);
 
   List<Utilisateur> findByStatus(Boolean status);
 }

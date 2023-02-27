@@ -6,6 +6,7 @@ import com.ikaautoecole.spring.projet.models.ERole;
 import com.ikaautoecole.spring.projet.models.Role;
 import com.ikaautoecole.spring.projet.repository.ApprenantRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
+import com.ikaautoecole.spring.projet.repository.UtilisateurRepository;
 import com.ikaautoecole.spring.projet.services.ApprenantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +36,17 @@ public class ApprenantController {
     @Autowired
     PasswordEncoder encoder;
 
+    @Autowired
+    UtilisateurRepository utilisateurRepository;
+
     @PostMapping("/save")
     public ResponseEntity<?> saveApprenant(@RequestBody Apprenant apprenant){
-        if (apprenantRepository.existsByUsername(apprenant.getUsername())) {
+        if (utilisateurRepository.existsByUsername(apprenant.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse(" ce nom d'utilisateur existe deja!"));
         }
 
         //VERIFICATION DE L'EXISTANCE DE L'EMAIL
-        if (apprenantRepository.existsByEmail(apprenant.getEmail())) {
+        if (utilisateurRepository.existsByEmail(apprenant.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Cet email existe deja!"));
         }
 

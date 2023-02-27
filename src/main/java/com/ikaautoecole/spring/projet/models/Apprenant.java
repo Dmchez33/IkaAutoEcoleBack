@@ -5,10 +5,11 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -16,6 +17,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @SuperBuilder
+@SelectBeforeUpdate
+@DynamicUpdate
 @Table(name = "apprenant",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),

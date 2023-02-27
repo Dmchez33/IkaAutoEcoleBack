@@ -5,6 +5,7 @@ import com.ikaautoecole.spring.projet.Configuration.SMSService;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
 import com.ikaautoecole.spring.projet.Configuration.SendEmail;
 import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
+import com.ikaautoecole.spring.projet.DTO.request.DemandeCreationCompte;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.AdminAutoEcole;
 import com.ikaautoecole.spring.projet.models.ERole;
@@ -13,8 +14,10 @@ import com.ikaautoecole.spring.projet.models.TypeCours;
 import com.ikaautoecole.spring.projet.repository.AdminautoecoleRepository;
 import com.ikaautoecole.spring.projet.repository.RoleRepository;
 import com.ikaautoecole.spring.projet.repository.TypeCoursRepository;
+import com.ikaautoecole.spring.projet.repository.UtilisateurRepository;
 import com.ikaautoecole.spring.projet.services.AdminAutoEcoleServiceImpl;
 import com.ikaautoecole.spring.projet.services.TypeCoursServiceImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,9 @@ public class AdminAutoEcoleController {
     @Autowired
     TypeCoursServiceImpl typeCoursService;
 
+    @Autowired
+    UtilisateurRepository utilisateurRepository;
+
     //METHODE PERMETTANT DE RECUPERER TOUS LES UTILISATEURS
     @GetMapping("/getAll")
     //@PreAuthorize("hasRole('ADMIN')")
@@ -71,12 +77,12 @@ public class AdminAutoEcoleController {
         try {
             AdminAutoEcoleRequest signUpRequest = new JsonMapper().readValue(signUpRequest1, AdminAutoEcoleRequest.class);
 //VERIFICATION DE L'EXISTANCE DU NOM D'UTILISATEUR
-            if (adminautoecoleRepository.existsByUsername(signUpRequest.getUsername())) {
+            if (utilisateurRepository.existsByUsername(signUpRequest.getUsername())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Erreur: ce nom d'utilisateur existe deja!"));
             }
 
             //VERIFICATION DE L'EXISTANCE DE L'EMAIL
-            if (adminautoecoleRepository.existsByEmail(signUpRequest.getEmail())) {
+            if (utilisateurRepository.existsByEmail(signUpRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Erreur: Cet email existe deja!"));
             }
 
@@ -197,6 +203,12 @@ public class AdminAutoEcoleController {
 
 
 
-    //**************************************METHODE CONCERNANT LA RESERVATION DES COURS AU PRES DES AUTOECOLE
+    //************************************** DEMANDE DE CREATION DE COMPTE
+    @PostMapping("/demande")
+    public ResponseEntity<?> demande(@RequestBody() DemandeCreationCompte  demandeCreationCompte){
+        sendEmail.MessageDemandeCreationComptepouruneAutoEcoel(demandeCreationCompte.getEmail(), demandeCreationCompte.getNom(), demandeCreationCompte.getPrenom(), demandeCreationCompte.getUsername(), demandeCreationCompte.getTelephone(), demandeCreationCompte.getVille(), demandeCreationCompte.getQuartier(), demandeCreationCompte.getRue(), demandeCreationCompte.getPorte(), demandeCreationCompte.getNomAutoEcole());
+        return ResponseEntity.ok().body(new MessageResponse("Votre demande à été envoyer avec success "));
+    }
+
 
 }

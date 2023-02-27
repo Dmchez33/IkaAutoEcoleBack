@@ -26,7 +26,7 @@ public class VehiculeServiceImpl {
     //ENREGISTRELENT D'UN VEHICULE
     public String AddVehicule(Vehicule vehicule)
     {
-        if (vehiculeRepository.existsByMarquevehiculeAndTypevehiculeAndNomvehicule(vehicule.getMarquevehicule(),vehicule.getTypevehicule(),vehicule.getNomvehicule())){
+        if (vehiculeRepository.existsByMarquevehiculeAndTypevehicule(vehicule.getMarquevehicule(),vehicule.getTypevehicule())){
             return "Ce vehicule existe déjà";
         }else{
             vehiculeRepository.save(vehicule);
