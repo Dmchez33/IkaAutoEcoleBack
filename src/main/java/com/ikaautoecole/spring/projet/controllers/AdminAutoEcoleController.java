@@ -78,12 +78,12 @@ public class AdminAutoEcoleController {
             AdminAutoEcoleRequest signUpRequest = new JsonMapper().readValue(signUpRequest1, AdminAutoEcoleRequest.class);
 //VERIFICATION DE L'EXISTANCE DU NOM D'UTILISATEUR
             if (utilisateurRepository.existsByUsername(signUpRequest.getUsername())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Erreur: ce nom d'utilisateur existe deja!"));
+                return ResponseEntity.ok().body(new MessageResponse("Erreur: ce nom d'utilisateur existe deja!"));
             }
 
             //VERIFICATION DE L'EXISTANCE DE L'EMAIL
             if (utilisateurRepository.existsByEmail(signUpRequest.getEmail())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Erreur: Cet email existe deja!"));
+                return ResponseEntity.ok().body(new MessageResponse("Erreur: Cet email existe deja!"));
             }
 
 
@@ -119,7 +119,7 @@ public class AdminAutoEcoleController {
 
             if (file != null) {
 
-                user.setImage(SaveImage.save("activite", file, user.getUsername()));
+                user.setImage(SaveImage.save("activite", file, file.getOriginalFilename()));
             }
 
             user.setRoles(roles);
@@ -127,13 +127,13 @@ public class AdminAutoEcoleController {
             user.setNom(signUpRequest.getNom());
             user.setPrenom(signUpRequest.getPrenom());
             user.setTelephone(signUpRequest.getTelephone());
-            sendEmail.sendWelcomeEmail(signUpRequest.getEmail(), signUpRequest.getUsername());
-            smsService.sendSMS(signUpRequest.getTelephone(), "Votre inscription a été effectué avec success");
-            adminautoecoleRepository.save(user);
 
+            adminautoecoleRepository.save(user);
+            sendEmail.MessageDeRetour(signUpRequest.getEmail(),"http://localhost:4200/connexion",signUpRequest.getPrenom(), signUpRequest.getUsername(), signUpRequest.getPassword());
+            smsService.sendSMS(signUpRequest.getTelephone(), "Votre inscription a été effectué avec success \nVous pouvez verifier votre email pour le reste des procedure");
             return ResponseEntity.ok(new MessageResponse("Ok"));
         } catch (Exception e) {
-            return ResponseEntity.ok(new MessageResponse("Erreur lors de creation de l'admin"));
+            return ResponseEntity.ok(new MessageResponse(e.getMessage()));
         }
     }
 
@@ -209,6 +209,8 @@ public class AdminAutoEcoleController {
         sendEmail.MessageDemandeCreationComptepouruneAutoEcoel(demandeCreationCompte.getEmail(), demandeCreationCompte.getNom(), demandeCreationCompte.getPrenom(), demandeCreationCompte.getUsername(), demandeCreationCompte.getTelephone(), demandeCreationCompte.getVille(), demandeCreationCompte.getQuartier(), demandeCreationCompte.getRue(), demandeCreationCompte.getPorte(), demandeCreationCompte.getNomAutoEcole());
         return ResponseEntity.ok().body(new MessageResponse("Votre demande à été envoyer avec success "));
     }
+
+
 
 
 }

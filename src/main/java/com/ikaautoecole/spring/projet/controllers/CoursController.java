@@ -1,6 +1,7 @@
 package com.ikaautoecole.spring.projet.controllers;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.ikaautoecole.spring.projet.Configuration.Audio;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
 import com.ikaautoecole.spring.projet.DTO.request.AdminAutoEcoleRequest;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,13 +83,21 @@ public class CoursController {
 
     //POST CONTENU
     @PostMapping("/postContenu")
-    public ResponseEntity<?> postContenu(@RequestParam(value = "contenu") String Contenu,@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam(value = "audio", required = false) MultipartFile audio){
+    public ResponseEntity<?> postContenu(@RequestParam(value = "contenu") String Contenu,@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam(value = "description", required = false) MultipartFile description,@RequestParam(value = "audio", required = false) MultipartFile audio){
         try {
             ContenuCours contenuCours = new JsonMapper().readValue(Contenu, ContenuCours.class);
             if (file != null) {
                 System.out.println("Enregistrement de l'image");
                 //String nomImage[] = file.getOriginalFilename().split(".");
-                contenuCours.setImage(SaveImage.save("contenu", file, file.getOriginalFilename()));
+                contenuCours.setImage(SaveImage.save("cours", file, file.getOriginalFilename()));
+
+            }else{
+                return ResponseEntity.ok().body( new MessageResponse("VEILLEZ SELECTIONNER UNE IMAGE"));
+            }
+            if (description != null) {
+                System.out.println("Enregistrement de l'image");
+                //String nomImage[] = file.getOriginalFilename().split(".");
+                contenuCours.setDescription(SaveImage.save("contenu", description, file.getOriginalFilename()));
 
             }else{
                 return ResponseEntity.ok().body( new MessageResponse("VEILLEZ SELECTIONNER UNE IMAGE"));
@@ -94,7 +105,14 @@ public class CoursController {
             if (audio != null) {
                 System.out.println("Enregistrement de l'audio");
                 //String nomvocal[] = audio.getOriginalFilename().split(".");
-                contenuCours.setVocal(SaveImage.save("contenuvocal", audio,audio.getOriginalFilename() ));
+                String uploadDir = Audio.SOURCE_DIR+"cours";//System.getProperty("user.dir") + "/assets/aud";
+                //String uploadDir = System.getProperty("java.io.tmpdir") + "assets/aud"; //Pour heroku
+                File convFile = new File(audio.getOriginalFilename());
+                FileOutputStream fos = new FileOutputStream(convFile);
+                fos.write(audio.getBytes());
+                fos.close();
+                Audio.saveAudio(uploadDir, convFile);
+                contenuCours.setVocal(audio.getOriginalFilename());
             }else{
                 return ResponseEntity.ok().body( new MessageResponse("VEILLEZ SELECTIONNER UN AUDIO"));
             }

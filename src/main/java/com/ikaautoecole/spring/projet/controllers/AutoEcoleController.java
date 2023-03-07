@@ -3,6 +3,7 @@ package com.ikaautoecole.spring.projet.controllers;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
 import com.ikaautoecole.spring.projet.Configuration.SendEmail;
+import com.ikaautoecole.spring.projet.DTO.request.ReservationRequest;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.*;
 import com.ikaautoecole.spring.projet.repository.*;
@@ -12,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +26,9 @@ public class AutoEcoleController {
 
     @Autowired
     AutoEcoleServiceImpl autoEcoleService;
+
+    @Autowired
+    TypeCoursRepository typeCoursRepository;
 
     @Autowired
     AutoEcoleRepository autoEcoleRepository;
@@ -110,7 +117,7 @@ public class AutoEcoleController {
     }
 
     //RETOURNER UNE AUTOECOLE PAR SON ID
-    @GetMapping("/getbyId")
+    @GetMapping("/getbyId/{id}")
     public Autoecole getbyId(@PathVariable Long id){
         return autoEcoleService.getAutoEcoleById(id);
     }
@@ -119,11 +126,11 @@ public class AutoEcoleController {
     @GetMapping("/getAutoEcole/{quartier}")
     public List<Autoecole> getAutoByQuartier(@PathVariable("quartier") String quartier){
         Adresse adresse = adresseRepository.findByQuartier(quartier);
-        if (adresse != null){
+        //if (adresse != null){
             return autoEcoleRepository.findAutoecoleByAdresses(adresse);
-        }else {
-            return null;
-        }
+        //}else {
+            //return null;
+        //}
     }
 
     //OBTENIR TOUTES L'ADRESSE
@@ -268,19 +275,27 @@ public class AutoEcoleController {
 
     //METHODE UTILISER POUR RESERVER DES COURS AUPRES DES AUTOECOLES;
 
-    @PostMapping("/reserverCours/{idAutoEcole}/{idApprenant}")
-public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @PathVariable("idApprenant") Long idApprenant, @RequestBody Reservation reservation){
+    @PostMapping("/reserverCours/{idAutoEcole}/{idCours}/{idApprenant}")
+public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @PathVariable("idApprenant") Long idApprenant,@PathVariable("idCours") Long idCours, @RequestBody ReservationRequest reservation){
    Apprenant apprenant = apprenantRepository.getReferenceById(idApprenant);
    Autoecole autoecole = autoEcoleRepository.getReferenceById(id);
-   Reservation reservation1 = reservationRepository.findByApprenantAndAutoEcole(apprenant, autoecole);
+   TypeCours typeCours = typeCoursRepository.getReferenceById(idCours);
+   Reservation reservation1 = reservationRepository.findByApprenantAndAutoEcoleAndTypeCours(apprenant, autoecole,typeCours);
+   Reservation reservation2 = new Reservation();
    if (apprenant != null){
-       reservation.setApprenant(apprenant);
+       reservation2.setApprenant(apprenant);
    }else {
        return ResponseEntity.ok().body(new MessageResponse("Ereeur lors du choix de l'utilisateur"));
    }
+        if (typeCours != null){
+            reservation2.setTypeCours(typeCours);
+        }else {
+            return ResponseEntity.ok().body(new MessageResponse("Ereeur lors du choix du typeCours"));
+        }
+
 
    if (autoecole != null){
-       reservation.setAutoEcole(autoecole);
+       reservation2.setAutoEcole(autoecole);
    }else {
        return ResponseEntity.ok().body(new MessageResponse("Erreur lors du selection de l'autoecole"));
    }
@@ -289,13 +304,39 @@ public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @Pa
    if (reservation1 != null){
        return ResponseEntity.ok().body(new MessageResponse("Vous avez déjà reserver le cours pour cette autoécole"));
    }else{
-       reservation.setEtat(EtatReservation.ATTENTE);
-       sendEmail.MessageReservationEncoursDeTraitement(apprenant.getEmail(), apprenant.getPrenom(), autoecole.getNom());
-       reserverCoursService.faireReservation(reservation);
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+       LocalDate date = LocalDate.parse(reservation.getDate(), formatter);
+
+       DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("HH:mm");
+       LocalTime time = LocalTime.parse(reservation.getHeure(), formatter1);
+
+       reservation2.setEtat(EtatReservation.ATTENTE);
+       reservation2.setDate(date);
+       reservation2.setHeure(time);
+
+
+       reserverCoursService.faireReservation(reservation2);
+       sendEmail.MessageReservationEncoursDeTraitement(autoecole.getAdminAutoEcole().getEmail(),apprenant.getEmail(), apprenant.getNom(), apprenant.getPrenom(),apprenant.getTelephone());
+
        return ResponseEntity.ok().body(new MessageResponse("Ok"));
    }
 
 }
+
+    @GetMapping("/getAutoByAdmin/{id}")
+    public List<Autoecole> getAutoEcoleByAdmin(@PathVariable("id") Long id){
+        AdminAutoEcole adminAutoEcole = adminautoecoleRepository.getReferenceById(id);
+        return autoEcoleRepository.findByAdminAutoEcole(adminAutoEcole);
+    }
+
+    //METHODE PERMETTANT D'ACCEPTER LA DEMANDE DE l'UTILISATEUR
+    @PatchMapping("/updateReservation/{id}")
+    public ResponseEntity<?> accepteDemande(@PathVariable("id") Long id){
+
+
+        autoEcoleService.modifierEtatReservation(id,EtatReservation.ACCEPTE);
+        return ResponseEntity.ok().body(new MessageResponse("Ok"));
+    }
 
 
 

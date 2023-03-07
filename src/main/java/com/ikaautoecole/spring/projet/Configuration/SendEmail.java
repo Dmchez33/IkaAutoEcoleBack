@@ -21,7 +21,7 @@ public class SendEmail {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom("idrdem83@gmail.com");
             helper.setTo(to);
-            helper.setSubject("Bienvenue sur notre plateforme IkaAutoEcole!");
+            helper.setSubject("Plateforme IkaAutoEcole!");
             helper.setText("Bonjour " + name + ",\n\nBienvenue sur notre plateforme IkaAutoEcole! Nous sommes heureux de vous compter parmi nos utilisateurs.\nVous allez recévoir un E-mail de validation de votre compte dans un delai de 2 Jours.\n Veillez rester en écoute Mr/Mme"+name+"\n\nCordialement,\nL'équipe IkaAutoEcole");
             System.out.println("Mail Send...");
             mailSender.send(message);
@@ -30,14 +30,17 @@ public class SendEmail {
         }
     }
 
-    public void MessageDeRetour(String to, String name, String password) {
+    public void MessageDeRetour(String to, String lien, String prenom, String name, String password) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom("idrdem83@gmail.com");
             helper.setTo(to);
             helper.setSubject("Bienvenue sur notre plateforme IkaAutoEcole!");
-            helper.setText("Bonjour " + name + ",\n\nNous sommes heureux de vous anoncé que votre compte a été validé avec success!\nVos identifiants sont.\n Nom d'utilisateur:"+name+"\n\nMot de passe:"+password+"\nVeuillez modifier votre mot de passe après votre connexion\n\n");
+            helper.setText("Bonjour " + prenom + ",\n\nNous sommes heureux de vous anoncé que votre compte a été validé avec success!\nVos identifiants sont.\n Nom d'utilisateur:"+name+"\n\nMot de passe:"+password+"\n " +
+                    "Lien de pour se connnecter: " + lien +
+                    "\nVeuillez modifier votre mot de passe après votre connexion\n" +
+                    "Cordialement, Equipe IkaAutoEcole\n");
             System.out.println("Mail Send...");
             mailSender.send(message);
         } catch (MessagingException ex) {
@@ -45,14 +48,20 @@ public class SendEmail {
         }
     }
 
-    public void MessageReservationEncoursDeTraitement(String to, String name, String nomAutoEcole) {
+    public void MessageReservationEncoursDeTraitement(String to,String from, String nom, String prenom, String telephone) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom("idrdem83@gmail.com");
+            helper.setFrom(from);
             helper.setTo(to);
-            helper.setSubject("Equipe de l'auto-école!"+nomAutoEcole);
-            helper.setText("Bonjour " + name + ",\nVotre demande de reservation est encours de traitement \n Vous serez contacté par notre équipe dans un delai de 2h \n Veillez rester en écoute Mr/Mme"+name+"\n\nCordialement,\nL'équipe "+nomAutoEcole);
+            helper.setSubject("Plateforme IkaAutoEcole!");
+            helper.setText("Vous avez reçu une demande de réservation de la part de : " +
+                    "\n\nNom :" + nom
+                    +"\nPrenom :" + prenom
+                    +"\nNuméro de téléphone :" +telephone
+                    +"\nMerci de contacter cette personne dès que possible pour convenir d'un horaire qui convienne à chacun.\n" +
+                    "\n" +
+                    "Cordialement,\nEquipe IkaAutoEcole");
             System.out.println("Mail Send...");
             mailSender.send(message);
         } catch (MessagingException ex) {

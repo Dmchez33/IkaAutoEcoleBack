@@ -1,5 +1,6 @@
 package com.ikaautoecole.spring.projet.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ public class ContenuCours {
     private String description;
     private String vocal;
     private String image;
-
+    @JsonIgnore
     @ManyToOne
     Cours cours;
 }

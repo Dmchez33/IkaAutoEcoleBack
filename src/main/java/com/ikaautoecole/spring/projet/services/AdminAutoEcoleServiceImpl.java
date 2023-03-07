@@ -31,7 +31,7 @@ public class AdminAutoEcoleServiceImpl {
             BeanWrapper beanWrapper = new BeanWrapperImpl(yourObject);
             beanWrapper.setPropertyValue(k, v);
         });
-        sendEmail.MessageDeRetour(yourObject.getEmail(), yourObject.getUsername(), yourObject.getPassword());
+        sendEmail.MessageDeRetour(yourObject.getEmail(),"http://localhost:4200/connexion",yourObject.getPrenom(), yourObject.getUsername(), yourObject.getPassword());
 
         return adminautoecoleRepository.save(yourObject);
     }

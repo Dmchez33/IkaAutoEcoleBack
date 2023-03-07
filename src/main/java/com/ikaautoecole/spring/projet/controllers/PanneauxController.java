@@ -1,6 +1,7 @@
 package com.ikaautoecole.spring.projet.controllers;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.ikaautoecole.spring.projet.Configuration.Audio;
 import com.ikaautoecole.spring.projet.Configuration.SaveImage;
 import com.ikaautoecole.spring.projet.DTO.response.MessageResponse;
 import com.ikaautoecole.spring.projet.models.PanneauxConduite;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 @RestController
@@ -45,7 +48,14 @@ public class PanneauxController {
                 return ResponseEntity.ok().body(new MessageResponse("Veuillez selectionner une image"));
             }
             if (vocal != null){
-                panneauxConduite1.setVocal(SaveImage.save("panneauxConduite",vocal,vocal.getOriginalFilename()));
+                String uploadDir = Audio.SOURCE_DIR+"panneaux";//System.getProperty("user.dir") + "/assets/aud";
+                //String uploadDir = System.getProperty("java.io.tmpdir") + "assets/aud"; //Pour heroku
+                File convFile = new File(vocal.getOriginalFilename());
+                FileOutputStream fos = new FileOutputStream(convFile);
+                fos.write(vocal.getBytes());
+                fos.close();
+                Audio.saveAudio(uploadDir, convFile);
+                panneauxConduite1.setVocal(vocal.getOriginalFilename());
             }else {
                 return ResponseEntity.ok().body(new MessageResponse("Veuillez selectionner un audio"));
             }
