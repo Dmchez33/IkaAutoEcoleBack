@@ -12,7 +12,7 @@ public class SMSService {
 
     public SMSService() {
         ACCOUNT_SID = "AC059e81ff4a26001119e3b19df555edea";
-        AUTH_TOKEN = "4bd1daf43ae9c9a5a63e54d315e5820d";
+        AUTH_TOKEN = "01dd36dcc3f979454b8d43bd4ef04b8c";
         FROM_NUMBER = "+17756307308";
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
     }
@@ -33,11 +33,11 @@ public class SMSService {
     public void sendSMSAcceptReserve(String phoneNumber, String prenom) {
         String mess = "Bonjour " + prenom +",\n"+
                 "\n" +
-                "Nous sommes heureux de vous informer que votre réservation a été acceptée. Vous pouvez maintenant passer au centre pour participer à votre cours.\n" +
+                "Nous sommes heureux de vous informer que votre réservation a été acceptée. Vous pouvez maintenant passer au centre pour avoir le reste des informations.\n" +
                 "\n" +
                 "Merci pour votre confiance et à bientôt !\n" +
                 "\n" +
-                "Cordialement, IkaAutoEcole";
+                "Cordialement, IkaAutoEcole\ntél: +22361760827\nEmail: iddrdem83@gmail.com";
         try {
             Message message = Message
                     .creator(new PhoneNumber(phoneNumber), // to

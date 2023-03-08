@@ -285,26 +285,26 @@ public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @Pa
    if (apprenant != null){
        reservation2.setApprenant(apprenant);
    }else {
-       return ResponseEntity.ok().body(new MessageResponse("Ereeur lors du choix de l'utilisateur"));
+       return ResponseEntity.badRequest().body(new MessageResponse("Ereeur lors du choix de l'utilisateur"));
    }
         if (typeCours != null){
             reservation2.setTypeCours(typeCours);
         }else {
-            return ResponseEntity.ok().body(new MessageResponse("Ereeur lors du choix du typeCours"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Ereeur lors du choix du typeCours"));
         }
 
 
    if (autoecole != null){
        reservation2.setAutoEcole(autoecole);
    }else {
-       return ResponseEntity.ok().body(new MessageResponse("Erreur lors du selection de l'autoecole"));
+       return ResponseEntity.badRequest().body(new MessageResponse("Erreur lors du selection de l'autoecole"));
    }
 
 
    if (reservation1 != null){
-       return ResponseEntity.ok().body(new MessageResponse("Vous avez déjà reserver le cours pour cette autoécole"));
+       return ResponseEntity.badRequest().body(new MessageResponse("Vous avez déjà reserver le cours pour cette autoécole"));
    }else{
-       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
        LocalDate date = LocalDate.parse(reservation.getDate(), formatter);
 
        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("HH:mm");
@@ -336,6 +336,20 @@ public ResponseEntity<?> reserverCours(@PathVariable("idAutoEcole") Long id, @Pa
 
         autoEcoleService.modifierEtatReservation(id,EtatReservation.ACCEPTE);
         return ResponseEntity.ok().body(new MessageResponse("Ok"));
+    }
+
+    @GetMapping("/getAllReservation")
+    public List<Reservation> getAll(){
+        return reservationRepository.findAll();
+    }
+
+    //Reservation
+    @GetMapping("/liste/{autoid}")
+    public List<Reservation> getListe(@PathVariable("autoid") Long id){
+
+        Autoecole autoecole = autoEcoleRepository.getReferenceById(id);
+
+        return reservationRepository.findByAutoEcole(autoecole);
     }
 
 
